@@ -60,7 +60,7 @@ public class Aim : MonoBehaviour {
 		Vector3 init_vel;
 		init_vel.x = target.x / tof;
 		init_vel.z = target.z / tof;
-		init_vel.y = target.y - 0.5f * Physics.gravity.y * tof;
+		init_vel.y = target.y - (0.5f * Physics.gravity.y * tof * tof)/tof
 
 		return init_vel;
 	}
