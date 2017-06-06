@@ -5,8 +5,8 @@ public class Spawner : MonoBehaviour {
 	public GameObject Projectile;
 	float speed = 0f;
 	public float cooldown;
-	public float current_cooldown = 5f;
-
+	public float current_cooldown;
+	public int total_spawned = 0;
 	public void set_speed(float n_speed){
 		speed = n_speed;
 	}
@@ -28,6 +28,7 @@ public class Spawner : MonoBehaviour {
 		Rigidbody rigid_body;
 
 		new_ball =(GameObject) GameObject.Instantiate (Projectile);
+		total_spawned++;
 		new_ball.transform.position = gameObject.transform.position;
 		new_ball.transform.rotation = gameObject.transform.rotation;
 		rigid_body = new_ball.GetComponentsInChildren<Rigidbody> ()[0];

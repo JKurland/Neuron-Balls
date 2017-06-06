@@ -12,7 +12,6 @@ public class Aim : MonoBehaviour {
 	public float time_of_flight;
 	public GameObject maxHeight;
 	Vector3 aim;
-	Random rnd = new Random();
 	// Use this for initialization
 	void Start () {
 		Vector3 mean = chooseTarget();
@@ -30,7 +29,6 @@ public class Aim : MonoBehaviour {
 			Vector3 mean = chooseTarget ();
 			mean = add_noise (mean);
 			Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
-			Debug.Log (mean);
 			gameObject.GetComponentsInChildren<Spawner> () [0].set_speed (init_vel.magnitude);
 
 			aim = init_vel;
