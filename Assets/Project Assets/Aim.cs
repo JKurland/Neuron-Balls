@@ -10,21 +10,15 @@ public class Aim : MonoBehaviour {
 	public Spawner spawner;
 	public float spread;
 	public float time_of_flight;
+	public GameObject maxHeight;
 	Vector3 aim;
 	// Use this for initialization
 	void Start () {
-		Vector3 mean = Vector3.zero;
-
-		int i = 0;
-		foreach (GameObject t in targets) {
-			mean += t.transform.position;
-			i += 1;
-		}
-		mean = mean / i;
+		Vector3 mean = target_mean ();
 
 		Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
 
-		aim = init_vel + spawner.transform.position;
+		aim = init_vel;
 		gameObject.transform.LookAt (aim);
 	}
 	
@@ -32,20 +26,13 @@ public class Aim : MonoBehaviour {
 	void Update () {
 		if (spawner.current_cooldown <= 0f) {
 			
-			Vector3 mean = Vector3.zero;
-
-			int i = 0;
-			foreach (GameObject t in targets) {
-				mean += t.transform.position;
-				i += 1;
-			}
-			mean = mean / i;
+			Vector3 mean = target_mean ();
 
 			Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
-
+			Debug.Log (mean);
 			gameObject.GetComponentsInChildren<Spawner> () [0].set_speed (init_vel.magnitude);
 
-			aim = init_vel + spawner.transform.position;
+			aim = init_vel;
 			aim = add_noise (aim);
 			spawner.shoot ();
 		}
@@ -59,7 +46,13 @@ public class Aim : MonoBehaviour {
 
 	Vector3 add_noise(Vector3 target){
 		Vector3 new_vector;
+
 		new_vector = target + Random.insideUnitSphere * spread;
+
+		if (new_vector.y > maxHeight.transform.position.y) {
+			new_vector.y = maxHeight.transform.position.y;
+		}
+
 		return new_vector;
 	}
 
@@ -70,5 +63,18 @@ public class Aim : MonoBehaviour {
 		init_vel.y = target.y - 0.5f * Physics.gravity.y * tof;
 
 		return init_vel;
+	}
+
+	Vector3 target_mean(){
+		Vector3 mean = Vector3.zero;
+
+		int i = 0;
+		foreach (GameObject t in targets) {
+			mean += t.transform.position;
+			i += 1;
+		}
+		mean = mean / i;
+
+		return mean;
 	}
 }

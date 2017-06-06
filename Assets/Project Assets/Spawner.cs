@@ -19,7 +19,6 @@ public class Spawner : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		current_cooldown -= Time.deltaTime;
-		Debug.Log (current_cooldown);
 	}
 
 	public void shoot(){
