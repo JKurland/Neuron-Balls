@@ -12,9 +12,10 @@ public class Aim : MonoBehaviour {
 	public float time_of_flight;
 	public GameObject maxHeight;
 	Vector3 aim;
+	Random rnd = new Random();
 	// Use this for initialization
 	void Start () {
-		Vector3 mean = target_mean ();
+		Vector3 mean = chooseTarget();
 
 		Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
 
@@ -26,14 +27,14 @@ public class Aim : MonoBehaviour {
 	void Update () {
 		if (spawner.current_cooldown <= 0f) {
 			
-			Vector3 mean = target_mean ();
-
+			Vector3 mean = chooseTarget ();
+			mean = add_noise (mean);
 			Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
 			Debug.Log (mean);
 			gameObject.GetComponentsInChildren<Spawner> () [0].set_speed (init_vel.magnitude);
 
 			aim = init_vel;
-			aim = add_noise (aim);
+
 			spawner.shoot ();
 		}
 		Vector3 next_euler;
@@ -60,21 +61,15 @@ public class Aim : MonoBehaviour {
 		Vector3 init_vel;
 		init_vel.x = target.x / tof;
 		init_vel.z = target.z / tof;
-		init_vel.y = target.y - (0.5f * Physics.gravity.y * tof * tof)/tof
+		init_vel.y = (target.y - 0.5f * Physics.gravity.y * tof * tof) / tof;
 
 		return init_vel;
 	}
 
-	Vector3 target_mean(){
-		Vector3 mean = Vector3.zero;
+	Vector3 chooseTarget(){
 
-		int i = 0;
-		foreach (GameObject t in targets) {
-			mean += t.transform.position;
-			i += 1;
-		}
-		mean = mean / i;
-
-		return mean;
+		int r = Random.Range (0, targets.Length);
+		Vector3 target = targets [r].transform.position;
+		return target;
 	}
 }
