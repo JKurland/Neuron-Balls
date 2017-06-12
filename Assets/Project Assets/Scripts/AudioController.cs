@@ -25,10 +25,10 @@ public class AudioController : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision other){
-		double pitchShift = 0.2*(Random.value - 0.5) + 1f;
+		
 
 		if (other.gameObject.name == "Floor") {
-			
+			double pitchShift = 0.2*(Random.value - 0.5) + 1f;
 			int skip = Random.Range (0, 2);
 
 			groundThuds [groundCollisions + skip].pitch = (float)pitchShift;
@@ -40,7 +40,11 @@ public class AudioController : MonoBehaviour {
 		}
 
 		if (other.gameObject.name == "ColliderR" || other.gameObject.name == "ColliderL") {
+			double pitchShift = 0.2*(Random.value - 0.5) + 1f;
+
 			int r = Random.Range (0, playerThuds.Length);
+			playerThuds [r].volume = other.impulse.magnitude/2;
+			playerThuds [r].pitch = (float)pitchShift;
 			playerThuds [r].Play ();
 		}
 

@@ -11,19 +11,23 @@ public class Aim : MonoBehaviour {
 	public float spread;
 	public float time_of_flight;
 	public GameObject maxHeight;
+	public GameObject movementCircle;
+	public GameObject cannon;
 
 	public GameObject gameController;
 	Controller controller;
 
 	Vector3 aim;
+	Vector3 mean;
+	Vector3 nextPosition;
 	// Use this for initialization
 	void Start () {
 		controller = gameController.GetComponent<Controller> ();
-		Vector3 mean = chooseTarget();
+		mean = chooseTarget();
+		mean = add_noise (mean);
 
-		Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
+		aim = initial_velocity (mean - spawner.transform.position, time_of_flight);
 
-		aim = init_vel;
 		gameObject.transform.LookAt (aim);
 	}
 	
@@ -31,16 +35,21 @@ public class Aim : MonoBehaviour {
 	void Update () {
 		if (controller.running) {
 			if (spawner.current_cooldown <= 0f) {
-			
-				Vector3 mean = chooseTarget ();
-				mean = add_noise (mean);
-				Vector3 init_vel = initial_velocity (mean - spawner.transform.position, time_of_flight);
-				gameObject.GetComponentsInChildren<Spawner> () [0].set_speed (init_vel.magnitude);
 
-				aim = init_vel;
-
+				//fire
+				gameObject.GetComponentsInChildren<Spawner> () [0].set_speed (aim.magnitude);
 				spawner.shoot ();
+
+				//setup for next shot
+				nextPosition = choosePosition ();
+				cannon.GetComponent<CannonController> ().moveTo (nextPosition, spawner.cooldown);
+
+				mean = chooseTarget ();
+				mean = add_noise (mean);
+
+
 			}
+			aim = initial_velocity (mean - spawner.transform.position, time_of_flight);
 			Vector3 next_euler;
 			Quaternion aim_q = Quaternion.identity;
 			aim_q.SetLookRotation (aim);
@@ -76,5 +85,13 @@ public class Aim : MonoBehaviour {
 		int r = Random.Range (0, targets.Length);
 		Vector3 target = targets [r].transform.position;
 		return target;
+	}
+
+	Vector3 choosePosition(){
+		Vector3 target = Vector3.Scale(Random.insideUnitSphere, movementCircle.transform.localScale/2);
+		target.y = 0;
+		target += movementCircle.transform.position;
+		return target;
+
 	}
 }

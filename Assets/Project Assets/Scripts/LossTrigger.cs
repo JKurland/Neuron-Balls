@@ -23,8 +23,13 @@ public class LossTrigger : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		controller.sendScore (score);
 
+	}
+
+	public void DisplayScore(){
+		score = spawner.GetComponent<Spawner>().total_spawned - count;
+		scoreText.GetComponent<Text> ().text = score.ToString ();
 	}
 
 	void OnTriggerEnter(Collider other){
